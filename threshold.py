@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import cv2
 
 
 # finds average gray value of entire imagae
@@ -36,6 +37,10 @@ def find_global_threshold(im: np.ndarray, diff: int, t: int):
                 sum2 += x[...]
 
     t = int(((sum1 / count1 + sum2 / count2) / 2))  # recombine and normalize
+
+    cv2.imshow('image', cv2.normalize(global_threshold(im, t), None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1))
+    cv2.waitKey(0)
+
     # check if less than predefined difference
     if abs(t - t_prev) < diff:
         return t  # break recursion
@@ -69,6 +74,7 @@ def global_threshold_apply(im: np.ndarray, diff: int):
 # Segments image based on K number of cluster
 # takes in an image array, K number of clusters, and the type of cluster initialization
 def k_means(im: np.ndarray, k: int, initial: str):
+    counter = 0
     # get max and min values of image for cluster initialization
     max_val = np.max(im)
     min_val = np.min(im)
@@ -90,6 +96,7 @@ def k_means(im: np.ndarray, k: int, initial: str):
 
     # loop until cluster centers stop moving
     while not np.array_equiv(centroids, centroids_prev):
+        counter += 1
         centroids_prev = centroids
 
         # calculate distance between each point and each cluster center
@@ -115,6 +122,6 @@ def k_means(im: np.ndarray, k: int, initial: str):
             if cluster_array[j] == i:
                 # print('here')
                 im_flat[j] = centroids[i]
-
+    print('iterations: {}'.format(counter))
     # reshape and return processed image array
     return im_flat.reshape([dimensions[0], dimensions[1]])
