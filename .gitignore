@@ -125,3 +125,6 @@ dmypy.json
 
 # Pycharm files
 .idea/
+
+# resources plots
+plots/
