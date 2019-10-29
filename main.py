@@ -24,10 +24,11 @@ titles = ['im_1001a', 'im_1001d', 'im_1022a', 'im_1026a', 'im_1027a', 'im_1030a'
 def apply_global_thresholding(ims: list, diff: int):
     ims_processed = []
     for im in ims:
-        print('Processing image')
+        print('Processing image w/ global thresholding')
         ims_processed.append(im)
         ims_processed.append(threshold.global_threshold_apply(im, 2))
 
+    print('Completed all images\n')
     return ims_processed
 
 
@@ -58,7 +59,7 @@ def apply_k_means(ims: list, initial: str, k: int = 0):
     ims_processed = []
     if k == 0:
         for im in ims:
-            print('Processing image')
+            print('Processing image w/ k-means')
             ims_processed.append(im)
             ims_processed.append(threshold.k_means(im, 3, initial))
             ims_processed.append(threshold.k_means(im, 5, initial))
@@ -67,6 +68,7 @@ def apply_k_means(ims: list, initial: str, k: int = 0):
             ims_processed.append(im)
             ims_processed.append(threshold.k_means(im, k, initial))
 
+    print('Completed all images\n')
     return ims_processed
 
 
@@ -78,12 +80,12 @@ def write_imageset(ims: list, names: list, step: int, alg: str):
     for im in ims:
         if alg == 'global':
             if i % step == 0:
-                cv2.imwrite('resources/plots/{}_{}'.format(names[j], names_global[i % step]), im)
+                cv2.imwrite('resources/plots/{}_{}.png'.format(names[j], names_global[i % step]), im)
             else:
-                cv2.imwrite('resources/plots/{}_{}'.format(names[j], names_global[i % step]),
+                cv2.imwrite('resources/plots/{}_{}.png'.format(names[j], names_global[i % step]),
                             cv2.normalize(im, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1))
         else:
-            cv2.imwrite('resources/plots/{}_{}'.format(names[j], names_k[i % step]), im)
+            cv2.imwrite('resources/plots/{}_{}.png'.format(names[j], names_k[i % step]), im)
         i += 1
         if i % step == 0:
             j += 1
