@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 def find_grey_avg(im: np.ndarray):
@@ -43,3 +44,60 @@ def global_threshold_apply(im: np.ndarray, diff: int):
     t = find_global_threshold(im, diff, find_grey_avg(im))
 
     return global_threshold(im, t)
+
+
+# placing this here to remember
+# dist = numpy.linalg.norm(a-b)
+
+
+def k_means_intial(im: np.ndarray, k: int, initial: str):
+
+    dimensions = im.shape
+    total = dimensions[0] * dimensions[1]
+    im_flat = im.flatten()
+    centroids = np.zeros([k])
+    centroids_prev = np.zeros([k])
+
+    if initial == 'rand':
+        for i in range(k):
+            rand = random.randint(0, total-1)
+            centroids[i] = im_flat[rand]
+    elif initial == 'spaced':
+        idx = np.round(np.linspace(0, 255, k)).astype(int)
+        centroids = idx
+        # idx = np.round(np.linspace(0, len(im_flat) - 1, k)).astype(int)
+        # for i in range(k):
+        #   print(idx[i])
+        # centroids = im_flat[idx]
+
+
+    for i in range(k):
+        print(centroids[i])
+
+    cluster_array = np.zeros([total], dtype='int8')
+
+    while not np.array_equiv(centroids, centroids_prev):
+        centroids_prev = centroids
+        for i in range(im_flat.size):
+            dist_array = np.zeros([k])
+            for j in range(k):
+                dist_array[j] = np.linalg.norm(im_flat[i]-centroids[j])
+            cluster_array[i] = int(np.argmin(dist_array))
+            #print(cluster_array[i])
+
+        for i in range(k):
+            count = 0
+            summ = 0
+            for j in range(cluster_array.size):
+                if k == cluster_array[j]:
+                    count += 1
+                    summ += im_flat[j]
+                centroids[i] = int(summ/count) if count > 0 else centroids[i]
+
+    for i in range(k):
+        for j in range(im_flat.size):
+            if cluster_array[j] == i:
+                # print('here')
+                im_flat[j] = centroids[i]
+
+    return im_flat.reshape([dimensions[0], dimensions[1]])

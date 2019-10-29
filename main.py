@@ -16,6 +16,10 @@ im_1043a = cv2.imread('resources/Fig1043(a)(yeast_USC).tif', 0)
 im_1045a = cv2.imread('resources/Fig1045(a)(iceberg).tif', 0)
 im_1060a = cv2.imread('resources/Fig1060(a)(car on left).tif', 0)
 
-im_test = threshold.global_threshold_apply(im_1001a, 2)
-cv2.imshow('test', cv2.normalize(im_test, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1))
+#im_test = threshold.global_threshold_apply(im_1001a, 2)
+im_test = threshold.k_means_intial(im_1026a, 3, 'spaced')
+# im_test = threshold.k_means_intial(im_1001a, 1)
+# cv2.imshow('test', cv2.normalize(im_test, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1))
+cv2.imshow('test', im_test)
 cv2.waitKey(0)
+
