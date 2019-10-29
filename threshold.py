@@ -33,11 +33,12 @@ def find_global_threshold(im: np.ndarray, diff: int, t: int):
 
 
 def global_threshold(im: np.ndarray, t: int):
-    with np.nditer(im, op_flags=['readwrite']) as it:
+    im2 = im.copy()
+    with np.nditer(im2, op_flags=['readwrite']) as it:
         for x in it:
             x[...] = 1 if x[...] > t else 0
 
-    return im
+    return im2
 
 
 def global_threshold_apply(im: np.ndarray, diff: int):
@@ -50,8 +51,9 @@ def global_threshold_apply(im: np.ndarray, diff: int):
 # dist = numpy.linalg.norm(a-b)
 
 
-def k_means_intial(im: np.ndarray, k: int, initial: str):
-
+def k_means(im: np.ndarray, k: int, initial: str):
+    max_val = np.max(im)
+    min_val = np.min(im)
     dimensions = im.shape
     total = dimensions[0] * dimensions[1]
     im_flat = im.flatten()
@@ -59,20 +61,17 @@ def k_means_intial(im: np.ndarray, k: int, initial: str):
     centroids_prev = np.zeros([k])
 
     if initial == 'rand':
-        for i in range(k):
-            rand = random.randint(0, total-1)
-            centroids[i] = im_flat[rand]
+        centroids = random.sample(range(0, 256), k)
+        # for i in range(k):
+        #    rand = random.randint(0, total-1)
+        #    centroids[i] = im_flat[rand]
     elif initial == 'spaced':
-        idx = np.round(np.linspace(0, 255, k)).astype(int)
+        idx = np.round(np.linspace(min_val, max_val, k)).astype(int)
         centroids = idx
         # idx = np.round(np.linspace(0, len(im_flat) - 1, k)).astype(int)
         # for i in range(k):
         #   print(idx[i])
         # centroids = im_flat[idx]
-
-
-    for i in range(k):
-        print(centroids[i])
 
     cluster_array = np.zeros([total], dtype='int8')
 
